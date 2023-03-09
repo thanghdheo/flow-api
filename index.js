@@ -14,7 +14,7 @@ app.use(cors());
 app.use(bodyParser.json());
 
 mongoose.connect(
-  `mongodb://mongo:OzYGemzCkuA2y64S1qbJ@containers-us-west-199.railway.app:7051`
+  `mongodb+srv://thangc98:16112000%40Abc@thangc98.rac7lhx.mongodb.net/test`
 );
 
 const database = mongoose.connection;
@@ -104,6 +104,6 @@ app.get("/restore-wallet", async (req, res) => {
   }
 });
 
-app.listen(8000, () => {
+app.listen(8080, () => {
   console.log("listen");
 });
