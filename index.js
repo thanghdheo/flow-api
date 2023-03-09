@@ -82,7 +82,7 @@ app.get("/restore-wallet", async (req, res) => {
 
     if (!data) {
       const address = await createAddress(publicKey);
-
+      
       const walletData = new Modal({
         publicKey,
         address,
