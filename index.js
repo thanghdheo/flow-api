@@ -27,6 +27,8 @@ database.once("connected", () => {
   console.log("Database Connected");
 });
 
+
+
 const createAddress = async (publicKey) => {
   const data = await axios.post(
     "https://openapi.lilico.org/v1/address",
@@ -51,6 +53,11 @@ const createAddress = async (publicKey) => {
 
   return address;
 };
+
+// requests will never reach this route
+app.get('/', function (req, res) {
+  res.send('Welcome to API')
+})
 
 app.post("/create-wallet", async (req, res) => {
   const { publicKey, name } = req.body;
