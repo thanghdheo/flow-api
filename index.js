@@ -14,7 +14,7 @@ app.use(cors());
 app.use(bodyParser.json());
 
 mongoose.connect(
-  `mongodb+srv://thangc98:16112000%40Abc@thangc98.bfhoh5t.mongodb.net/test`
+  `mongodb+srv://thangc98:16112000%40Abc@thangc98.rac7lhx.mongodb.net/test`
 );
 
 const database = mongoose.connection;
@@ -27,32 +27,38 @@ database.once("connected", () => {
   console.log("Database Connected");
 });
 
+const createAddress = async (publicKey) => {
+  const data = await axios.post(
+    "https://openapi.lilico.org/v1/address",
+    {
+      publicKey,
+      hashAlgorithm: "SHA3_256",
+      signatureAlgorithm: "ECDSA_secp256k1",
+      weight: 1000,
+    },
+    {
+      headers: {
+        Authorization: "lilico:sF60s3wughJBmNh2",
+      },
+    }
+  );
+
+  const transaction = await fcl.tx(data.data.data.txId).onceSealed();
+
+  const address = transaction?.events?.find(
+    (item) => item.type === "flow.AccountCreated"
+  )?.data?.address;
+
+  return address;
+};
+
 app.post("/create-wallet", async (req, res) => {
-  const { publicKey, signatureAlgorithm, hashAlgorithm, weight, name } =
-    req.body;
+  const { publicKey, name } = req.body;
 
   try {
     //localhost
-    const data = await axios.post(
-      "https://openapi.lilico.org/v1/address",
-      {
-        publicKey,
-        hashAlgorithm,
-        signatureAlgorithm,
-        weight,
-      },
-      {
-        headers: {
-          Authorization: "lilico:sF60s3wughJBmNh2",
-        },
-      }
-    );
 
-    const transaction = await fcl.tx(data.data.data.txId).onceSealed();
-
-    const address = transaction?.events?.find(
-      (item) => item.type === "flow.AccountCreated"
-    )?.data?.address;
+    const address = await createAddress(publicKey);
 
     const walletData = new Modal({
       publicKey,
@@ -68,11 +74,23 @@ app.post("/create-wallet", async (req, res) => {
 });
 
 app.get("/restore-wallet", async (req, res) => {
-  const { publicKey } = req.query;
-  console.log(publicKey)
+  const { publicKey, name } = req.query;
   try {
+    let data;
     const wallets = await Modal.find();
-    const data = wallets.find((item) => item.publicKey === publicKey);
+    data = wallets.find((item) => item.publicKey === publicKey);
+
+    if (!data) {
+      const address = await createAddress(publicKey);
+
+      const walletData = new Modal({
+        publicKey,
+        address,
+        name,
+      });
+
+      data = await walletData.save();
+    }
     res.json(data);
   } catch (error) {
     res.status(400).json({ message: error.message });
