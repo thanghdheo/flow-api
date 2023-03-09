@@ -5,6 +5,7 @@ import axios from "axios";
 import bodyParser from "body-parser";
 import mongoose from "mongoose";
 import Modal from "./models/wallet.js";
+import timeout from 'connect-timeout'
 
 fcl.config().put("accessNode.api", "https://rest-mainnet.onflow.org");
 
@@ -12,6 +13,7 @@ const app = express();
 
 app.use(cors());
 app.use(bodyParser.json());
+app.use(timeout('100s'));
 
 mongoose.connect(
   `mongodb+srv://thangc98:16112000%40Abc@thangc98.rac7lhx.mongodb.net/test`
