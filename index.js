@@ -30,7 +30,7 @@ database.once("connected", () => {
 });
 
 
-
+//as
 const createAddress = async (publicKey) => {
   const data = await axios.post(
     "https://openapi.lilico.org/v1/address",
