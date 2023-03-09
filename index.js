@@ -14,7 +14,7 @@ app.use(cors());
 app.use(bodyParser.json());
 
 mongoose.connect(
-  `mongodb+srv://thangc98:16112000%40Abc@thangc98.rac7lhx.mongodb.net/test`
+  `mongodb://mongo:OzYGemzCkuA2y64S1qbJ@containers-us-west-199.railway.app:7051`
 );
 
 const database = mongoose.connection;
