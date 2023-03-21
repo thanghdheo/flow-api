@@ -36,7 +36,7 @@ const createAddress = async (publicKey) => {
     "https://openapi.lilico.org/v1/address",
     {
       publicKey,
-      hashAlgorithm: "SHA3_256",
+      hashAlgorithm: "SHA2_256",
       signatureAlgorithm: "ECDSA_secp256k1",
       weight: 1000,
     },
